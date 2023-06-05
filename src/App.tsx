@@ -8,14 +8,16 @@ import { getAuthActions } from "./store/actions/authActions";
 import { ConnectedProps, connect } from "react-redux";
 import Modal from "./components/UI/Modal";
 import AddFile from "./components/UI/AddFile";
+import { getPostActions } from "./store/actions/postActions";
 
-const App: FC<PropsFromRedux> = ({ setUserDetails }) => {
+const App: FC<PropsFromRedux> = ({ setUserDetails, getAllFiles }) => {
   const [addPostShowing, setAddPostShowing] = useState(false)
+  const [isUploading, setIsUploading] = useState(false);
 
-  const toggleAddPostShowing = ()=>{
+  const toggleAddPostShowing = () => {
     setAddPostShowing(!addPostShowing)
   }
-  
+
 
   useEffect(() => {
     const userDetails = localStorage.getItem('user')
@@ -23,16 +25,15 @@ const App: FC<PropsFromRedux> = ({ setUserDetails }) => {
       logout()
     } else {
       setUserDetails(JSON.parse(userDetails))
-      // getAllPosts()
+      getAllFiles()
     }
   }, [])
 
   return (
     <div className="flex flex-col w-full h-full relative">
       <Header renderRight />
-      <Modal handleClose={toggleAddPostShowing} show={addPostShowing}>
-        <p>ok</p>
-        <AddFile toggleAddPostShowing={toggleAddPostShowing} />
+      <Modal handleClose={isUploading ? () => {} : toggleAddPostShowing} show={addPostShowing}>
+        <AddFile isUploading={isUploading} setIsUploading={setIsUploading} />
       </Modal>
       <CenterWrapper>
         <div className="w-full h-full flex justify-center items-center">
@@ -52,9 +53,11 @@ const App: FC<PropsFromRedux> = ({ setUserDetails }) => {
   );
 }
 
+
 const mapActionsToProps = (dispatch: any) => {
   return {
-    ...getAuthActions(dispatch)
+    ...getAuthActions(dispatch),
+    ...getPostActions(dispatch)
   }
 }
 const connector = connect(null, mapActionsToProps);

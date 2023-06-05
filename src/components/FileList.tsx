@@ -1,25 +1,17 @@
+import { ConnectedProps, connect } from 'react-redux';
+import { UserPost } from '../types';
 import FileItem from './FileItem'
+import { FC } from 'react';
 
-const FILES = [
-  {name: "file1", date: new Date(), size: 30402},
-  {name: "file2", date: new Date(), size: 304021},
-  {name: "file3", date: new Date(), size: 304042},
-  {name: "file1", date: new Date(), size: 30402},
-  {name: "file2", date: new Date(), size: 304021},
-  {name: "file3", date: new Date(), size: 304042},
-  {name: "file1", date: new Date(), size: 30402},
-  {name: "file2", date: new Date(), size: 304021},
-  {name: "file3", date: new Date(), size: 304042},
-  {name: "file1", date: new Date(), size: 30402},
-  {name: "file2", date: new Date(), size: 304021},
-  {name: "file3", date: new Date(), size: 304042},
-]
+interface StateProps {
+  posts: any[];
+}
 
-const FileList = () => {
+const FileList: FC<PropsFromRedux> = ({posts}) => {
   return (
     <div className="flex flex-col max-h-[620px]">
       <div className="mb-6 flex justify-between items-center py-4 px-5 ">
-      <span className="text-center w-1/4 font-semibold text-lg">
+        <span className="text-center w-1/4 font-semibold text-lg">
           File Name
         </span>
         <span className="text-center w-1/4 font-semibold text-lg">
@@ -30,10 +22,19 @@ const FileList = () => {
         </span>
       </div>
       <div className="flex flex-col overflow-y-auto">
-      {FILES.map((f) => <FileItem _file={f} />)}
+        {posts.map((f) => <FileItem key={f._id} _file={f} />)}
       </div>
     </div>
   )
 }
 
-export default FileList
+const mapStoreStateToProps = ({ post }): StateProps => {
+  return {
+    ...post
+  }
+}
+const connector = connect(mapStoreStateToProps);
+
+type PropsFromRedux = ConnectedProps<typeof connector>;
+
+export default connector(FileList);
