@@ -61,7 +61,7 @@ const Login: FC<PropsFromRedux> = ({ login }) => {
                                     className="block text-sm font-bold mb-2"
                                     htmlFor="mail"
                                 >
-                                    Username or e-mail
+                                    E-mail
                                 </label>
                                 <input
                                     className=" bg-white appearance-none text-[#041B37] rounded w-full py-2 px-3 leading-tight focus:outline-none"
