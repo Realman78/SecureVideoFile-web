@@ -23,8 +23,10 @@ const Header: FC<HeaderProps> = ({ renderRight, renderBackToDashboard = false, u
       {renderRight && <span onClick={() => {
         if (userDetails?.status === "Active")
           navigate("/settings")
+        else
+          navigate("/login")
       }} className="h-full p-2 rounded-lg cursor-pointer hover:bg-slate-800">
-        <p>{userDetails?.username ?? "Loading..."}</p>
+        <p>{userDetails?.status === "Active" ? userDetails?.username ?? "Loading..." : "Log out"}</p>
       </span>}
     </div>
   )
