@@ -101,7 +101,9 @@ const Login: FC<PropsFromRedux> = ({ login }) => {
                                     Login
                                 </button>
                             </div>
-
+                            <span onClick={() => {
+                                navigate("/register")
+                            }} className="text-sm text-blue-500 underline cursor-pointer">Go to Register</span>
                         </div>
                     </form>
                 </div>

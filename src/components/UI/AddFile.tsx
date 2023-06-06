@@ -57,16 +57,17 @@ const AddFile: FC<AddFileProps> = ({ userDetails, isUploading, setIsUploading })
                 }
             );
             console.log(response.data);
-            location.reload()
         } catch (error) {
             console.error(error);
         } finally {
             setIsUploading(false)
+            location.reload()
         }
     };
 
     return (
-        <div>
+        <div className="text-center w-full h-full flex flex-col justify-evenly items-center">
+            <h2 className="mb-4 text-2xl uppercase font-bold">Upload{isUploading ? "ing..." : " a file"}</h2>
             {isUploading ? <img src="./loading.gif" alt="loading" className="w-24" /> : <>
                 <input
                     onChange={handleFileChoosing}
@@ -82,6 +83,7 @@ const AddFile: FC<AddFileProps> = ({ userDetails, isUploading, setIsUploading })
                     id="titleInput"
                     value={title}
                     onChange={handleTitleChange}
+                    className="text-white rounded w-full py-2 px-3 leading-tight focus:outline-none"
                 />
                 <br />
                 <input
@@ -90,6 +92,7 @@ const AddFile: FC<AddFileProps> = ({ userDetails, isUploading, setIsUploading })
                     id="accessCodeInput"
                     value={accessCode}
                     onChange={handleAccessCodeChange}
+                    className="text-white rounded w-full py-2 px-3 leading-tight focus:outline-none"
                 />
                 <br />
                 <button onClick={handleUpload}>Upload</button>

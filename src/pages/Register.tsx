@@ -128,6 +128,9 @@ const Register: FC<PropsFromRedux> = ({ register }) => {
                             </div>
 
                         </div>
+                        <span onClick={() => {
+                            navigate("/login")
+                        }} className="text-sm text-blue-500 underline cursor-pointer">Go to Login</span>
                     </form>
                 </div>
             </CenterWrapper>

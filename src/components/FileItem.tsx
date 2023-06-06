@@ -11,6 +11,7 @@ type FileItemProps = {
 
 const FileItem: FC<FileItemProps> = ({ _file }) => {
     const [addPostShowing, setAddPostShowing] = useState(false)
+    const [isDownloading, setIsDownloading] = useState(false)
     const [pass, setPass] = useState("")
 
     const passwordChangeHandler = (e) => {
@@ -26,64 +27,78 @@ const FileItem: FC<FileItemProps> = ({ _file }) => {
     return (
         <div className="bg-[#041B37] mb-6 flex justify-between items-center py-4 px-5 rounded-lg relative">
             <Modal handleClose={toggleAddPostShowing} show={addPostShowing}>
-                <p>ok</p>
-                <input type="text" value={pass} onChange={passwordChangeHandler} />
-                <button onClick={() => {
-                    const fd = new FormData()
-                    const url = 'http://localhost:9000/secureVideoFile/retrieveUsingURL';
-                    const password = pass;
-                    const fileUrl = _file.url;
-                    fd.append("password", password)
-                    fd.append("URL", fileUrl)
-                    fd.append("name", "ok")
+                <div className="text-center w-full h-full flex flex-col justify-evenly items-center">
+                    {isDownloading ? <>
+                        <div className="text-center w-full h-full flex flex-col justify-evenly items-center">
+                            <p className="text-lg">Checking rights to the file, converting, file will start downloading soon...</p>
+                            <img src="./loading.gif" alt="loading" className="w-20" />
+                        </div>
+                    </> : <>
+                        <h2 className="mb-4 text-xl uppercase font-bold">Download "{_file.name}"</h2>
+                        <input type="text" placeholder="Access Code..." value={pass} onChange={passwordChangeHandler} className="text-white mb-4 rounded w-full py-2 px-3 leading-tight focus:outline-none" />
+                        <button onClick={async () => {
+                            const fd = new FormData()
+                            const url = 'http://localhost:9000/secureVideoFile/retrieveUsingURL';
+                            const password = pass;
+                            const fileUrl = _file.url;
+                            fd.append("password", password)
+                            fd.append("URL", fileUrl)
+                            fd.append("name", "ok")
 
-                    const userDetails = localStorage.getItem('user')
-                    let authToken = ""
+                            const userDetails = localStorage.getItem('user')
+                            let authToken = ""
 
-                    if (userDetails) {
-                        const token = JSON.parse(userDetails).token
-                        authToken = "Bearer " + token
-                    } else {
-                        toast.error("user not logged in.");
-                        logout()
-                        return
-                    }
-
-                    fetch(url, {
-                        headers: {
-                            'Authorization': `Bearer ${authToken}`
-                        },
-                        body: fd,
-                        method: "POST"
-                    })
-                        .then(response => {
-                            if (response.status === 200) {
-                                // Extract the filename from the response headers
-                                console.log(response)
-                                const contentDisposition = response.headers.get('content-disposition');
-                                console.log(contentDisposition)
-                                const filename = _file.name+".zip"
-
-                                // Consume the response as a ReadableStream and create a Blob
-                                return response.blob().then(blob => {
-                                    // Create a download link element
-                                    const downloadLink = document.createElement('a');
-                                    downloadLink.href = URL.createObjectURL(blob);
-                                    downloadLink.download = filename;
-                                    downloadLink.click();
-                                });
-                            } else if (response.status === 401) {
-                                // Handle unauthorized access
-                                console.log('Unauthorized access');
+                            if (userDetails) {
+                                const token = JSON.parse(userDetails).token
+                                authToken = "Bearer " + token
                             } else {
-                                // Handle other error scenarios
-                                console.log('Error');
+                                toast.error("user not logged in.");
+                                logout()
+                                return
                             }
-                        })
-                        .catch(error => {
-                            console.log('Request failed', error);
-                        });
-                }}>Download</button>
+
+                            try {
+                                setIsDownloading(true)
+                                const response = await fetch(url, {
+                                    headers: {
+                                        'Authorization': `Bearer ${authToken}`
+                                    },
+                                    body: fd,
+                                    method: "POST"
+                                })
+                                if (response.status === 200) {
+                                    // Extract the filename from the response headers
+                                    console.log(response)
+                                    const contentDisposition = response.headers.get('content-disposition');
+                                    console.log(contentDisposition)
+                                    const filename = _file.name + ".zip"
+
+                                toast.info("File Conversion successful. Download will start soon")
+
+                                    // Consume the response as a ReadableStream and create a Blob
+                                    return response.blob().then(blob => {
+                                        // Create a download link element
+                                        const downloadLink = document.createElement('a');
+                                        downloadLink.href = URL.createObjectURL(blob);
+                                        downloadLink.download = filename;
+                                        downloadLink.click();
+                                    });
+                                } else if (response.status === 401) {
+                                    // Handle unauthorized access
+                                    console.log('Unauthorized access');
+                                } else {
+                                    // Handle other error scenarios
+                                    console.log('Error');
+                                }
+                            } catch (e) {
+                                console.log('Request failed', e);
+                                toast.error("Something went wrong.")
+                            } finally {
+                                setIsDownloading(false)
+                            }
+                        }}>Download</button>
+                    </>}
+                </div>
             </Modal>
             <div className="flex w-1/4">
                 <FileIcon />

@@ -3,6 +3,7 @@ export type UserDetails = {
     mail: string,
     username: string,
     token: string,
+    status: "Active" | "Pending",
     _id: string
 }
 export type UserPost = {

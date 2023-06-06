@@ -10,6 +10,7 @@ import store from './store/store';
 import './index.css';
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+import Settings from './pages/Settings';
 
 const router = createBrowserRouter([
   {
@@ -19,6 +20,10 @@ const router = createBrowserRouter([
   {
     path: "/register",
     element: <Register />,
+  },
+  {
+    path: "/settings",
+    element: <Settings />
   },
   {
     path: "/",
